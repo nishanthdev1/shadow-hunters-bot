@@ -4,5 +4,5 @@ runtime:
 commands:
   build:
     - pip install -r requirements.txt
-  run:
+  start:
     - python bot.py
