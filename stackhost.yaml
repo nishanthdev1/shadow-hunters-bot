@@ -1,7 +1,9 @@
 runtime:
-  image: python:3.11-slim
+  image: python:3.11
 
 commands:
   build:
+    - python -m pip install --upgrade pip
+    - pip install wheel
     - pip install -r requirements.txt
   start: python bot.py
