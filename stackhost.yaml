@@ -2,7 +2,5 @@ runtime:
   image: python:3.11-slim
 
 commands:
-  build:
-    - pip install -r requirements.txt
-  start:
-    - python bot.py
+  build: pip install -r requirements.txt
+  start: python bot.py
