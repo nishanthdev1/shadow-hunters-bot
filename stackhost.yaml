@@ -1,4 +1,6 @@
-runtime: python3
+runtime:
+  language: python
+  version: "3.11"
 
 build:
   command: pip install -r requirements.txt
