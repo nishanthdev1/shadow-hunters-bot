@@ -1,1 +1,1 @@
-worker: python bot.py
+python bot.py 2>&1 | tee /tmp/bot.log
