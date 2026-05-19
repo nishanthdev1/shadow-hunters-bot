@@ -44,7 +44,6 @@ async def do_hunter_summon(player: dict, count: int = 1) -> dict:
         results.append({"rarity": rarity, "hunter": hunter})
 
     await update_player(player["user_id"], {"hunter_pity": pity})
-    await update_player(player["user_id"], {"tickets": player["tickets"] - count})
     return {"success": True, "results": results, "highest": highest, "count": count}
 
 

@@ -15,6 +15,7 @@ import config
 from database.db import connect_db, close_db
 from handlers.handlers import router as main_router
 from admin.admin_handlers import router as admin_router
+from database.seed_monsters import seed_if_empty
 
 
 # ─── LOGGING ──────────────────────────────────────────────────────────────────
@@ -33,6 +34,13 @@ async def main():
 
     # Connect MongoDB
     await connect_db()
+
+    # Auto-seed monsters if DB is empty
+    seeded = await seed_if_empty()
+    if seeded:
+        logger.info(f"🌱 Seeded {seeded} default monsters into DB!")
+    else:
+        logger.info("✅ Monsters already in DB — skipping seed.")
 
     # Bot setup
     bot = Bot(

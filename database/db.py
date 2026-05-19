@@ -25,6 +25,7 @@ async def connect_db():
     await _db.hunters.create_index("name", unique=True)
     await _db.weapons.create_index("name", unique=True)
     await _db.monsters.create_index("gate_rank")
+    await _db.guilds.create_index("name")
 
     logger.info("✅ Connected to MongoDB Atlas!")
 

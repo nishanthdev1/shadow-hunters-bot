@@ -10,11 +10,13 @@ import random
 
 # ─── DEFAULT PLAYER ───────────────────────────────────────────────────────────
 
-def default_player(user_id: int, username: str = None) -> dict:
+def default_player(user_id: int, username: str = None, first_name: str = None) -> dict:
+    display_name = first_name or username or f"Hunter_{str(user_id)[-4:]}"
     return {
         "user_id": user_id,
         "username": username or "",
-        "hunter_name": f"Hunter_{str(user_id)[-4:]}",
+        "first_name": first_name or "",
+        "hunter_name": display_name,
         "level": 1,
         "exp": 0,
         "coins": config.STARTING_COINS,
@@ -36,8 +38,8 @@ def default_player(user_id: int, username: str = None) -> dict:
         "max_hp": 1000,
         "max_mana": 500,
         "combat_power": 100,
-        # Equipment
-        "equipped_weapon_id": None,
+        # Skills
+        "equipped_skills": ["vital_strike", "sprint"],
         "team_slots": [],
         # Progress
         "dungeon_clears": 0,
@@ -95,13 +97,22 @@ def recalculate(p: dict) -> dict:
 
 # ─── CRUD ─────────────────────────────────────────────────────────────────────
 
-async def get_or_create_player(user_id: int, username: str = None) -> dict:
+async def get_or_create_player(user_id: int, username: str = None, first_name: str = None) -> dict:
     player = await db.players().find_one({"user_id": user_id})
     if not player:
-        player = default_player(user_id, username)
+        player = default_player(user_id, username, first_name)
         player = recalculate(player)
         await db.players().insert_one(player)
         await generate_daily_quests(user_id)
+    else:
+        # Always sync Telegram name so old Hunter_XXXX accounts get updated
+        display_name = first_name or username or player["hunter_name"]
+        if player["hunter_name"] != display_name:
+            await db.players().update_one(
+                {"user_id": user_id},
+                {"$set": {"hunter_name": display_name, "first_name": first_name or "", "username": username or ""}}
+            )
+            player["hunter_name"] = display_name
     return player
 
 
